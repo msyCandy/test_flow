@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.msytools.testflow.backend.dao.TaskDao">
+
+    <select id="pageTask" resultType="com.msytools.testflow.backend.entity.TaskEntity">
+        select *
+        from task
+        where organization_id = #{orgId}
+            <if test="state != null">
+                and state = #{state}
+            </if>
+        order by id desc
+    </select>
+</mapper>

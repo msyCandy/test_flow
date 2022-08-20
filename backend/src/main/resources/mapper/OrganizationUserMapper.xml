@@ -11,4 +11,15 @@
             left join organization o on o.id = ou.organization_id
         where ou.user_id = #{userId}
     </select>
+    <select id="getOrgUser" resultType="com.msytools.testflow.backend.entity.dto.OrganizationUserDTO">
+        select u.id userId,
+               u.name userName,
+               ou.role_id
+        from organization_user ou
+            left join user u on u.id = ou.user_id
+        where ou.organization_id = #{orgId}
+            <if test="roleId != null">
+                and ou.role_id = #{roleId}
+            </if>
+    </select>
 </mapper>

@@ -17,4 +17,14 @@ public interface OrganizationUserDao extends BaseMapper<OrganizationUserEntity> 
      * @return
      */
     List<OrganizationUserDTO> getUserOrg(@Param("userId") int userId);
+
+    /**
+     * 获取组织内的用户
+     *
+     * @param orgId
+     * @param roleId
+     * @return
+     */
+    List<OrganizationUserDTO> getOrgUser(@Param("orgId") int orgId,
+                                         @Param("roleId") Integer roleId);
 }
