@@ -3,16 +3,17 @@ package com.msytools.testflow.backend.service;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.msytools.testflow.backend.api.task.form.CloseTaskForm;
-import com.msytools.testflow.backend.api.task.form.CreateTaskForm;
-import com.msytools.testflow.backend.api.task.form.GetTaskForm;
-import com.msytools.testflow.backend.api.task.form.ReportBugForm;
+import com.msytools.testflow.backend.api.task.form.*;
 import com.msytools.testflow.backend.common.enums.RoleEnum;
 import com.msytools.testflow.backend.common.exception.ClientException;
+import com.msytools.testflow.backend.dao.BugDao;
+import com.msytools.testflow.backend.dao.BugHistoryDao;
 import com.msytools.testflow.backend.dao.TaskDao;
+import com.msytools.testflow.backend.entity.BugEntity;
 import com.msytools.testflow.backend.entity.TaskEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -27,6 +28,10 @@ public class TaskService {
 
     @Autowired
     private TaskDao taskDao;
+    @Autowired
+    private BugDao bugDao;
+    @Autowired
+    private BugHistoryDao bugHistoryDao;
 
     /**
      * 新建测试任务
@@ -109,5 +114,26 @@ public class TaskService {
             throw new ClientException("您无权报告BUG");
         }
 
+    }
+
+    /**
+     * 扭转bug流程
+     *
+     * @param form
+     */
+    @Transactional
+    public void dealBug(DealBugForm form) {
+        Integer userId = (Integer) request.getAttribute("userId");
+        BugEntity bug = bugDao.selectById(form.getBugId());
+        if (bug == null) {
+            throw new ClientException("bug不存在");
+        }
+        Integer responsibleUserId = bug.getResponsibleUserId();
+        if (responsibleUserId != null && !responsibleUserId.equals(userId)) {
+            throw new ClientException("您不是处理人，无法修改");
+        }
+        if (form.getNextUserId() != null)  {
+            //修改下一节点的负责人
+        }
     }
 }
